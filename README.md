@@ -122,17 +122,17 @@ Deploy a single replica of the service.
 ```bash
 kn service create affinity --image quay.io/tardieu/affinity:dev --scale 1
 
-curl http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
 # session=abc, count=1
-curl http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
 # session=abc, count=2
-curl http://affinity.default.127.0.0.1.sslip.io/incr?session_id=123
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=123'
 # session=123, count=1
-curl http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
 # session=abc, count=3
-curl http://affinity.default.127.0.0.1.sslip.io/incr?session_id=123
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=123'
 # session=123, count=2
-curl http://affinity.default.127.0.0.1.sslip.io/incr?session_id=123
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=123'
 # session=123, count=3
 ```
 
@@ -150,11 +150,11 @@ may be routed to multiple replicas using distinct session counts for the same
 session.
 
 ```bash
-curl http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
 # session=abc, count=1
-curl http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
 # session=abc, count=1
-curl http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
 # session=abc, count=2
 ```
 
@@ -170,11 +170,11 @@ kn service create affinity --image quay.io/tardieu/affinity --scale 3
 Requests with the same `K-Session` header value are routed to the same replica.
 
 ```bash
-curl -H 'K-Session: abc' http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc
+curl -H 'K-Session: abc' 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
 # session=abc, count=1
-curl -H 'K-Session: abc' http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc
+curl -H 'K-Session: abc' 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
 # session=abc, count=2
-curl -H 'K-Session: abc' http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc
+curl -H 'K-Session: abc' 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
 # session=abc, count=3
 ```
 
@@ -194,11 +194,11 @@ Knative Serving now extracts the session id directly from the request url
 without the need for an additional header.
 
 ```bash
-curl http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
 # session=abc, count=1
-curl http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
 # session=abc, count=2
-curl http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
 # session=abc, count=3
 ```
 
@@ -226,11 +226,11 @@ multiple revisions and increment distinct session counts (for the empty session
 id).
 
 ```bash
-curl http://affinity.default.127.0.0.1.sslip.io/incr
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr'
 # session=, count=1
-curl http://affinity.default.127.0.0.1.sslip.io/incr
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr'
 # session=, count=1
-curl http://affinity.default.127.0.0.1.sslip.io/incr
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr'
 # session=, count=2
 ```
 
@@ -249,11 +249,11 @@ and increment the same session count since we deployed a single replica per
 revision.
 
 ```bash
-curl -H 'K-Revision: abc' http://affinity.default.127.0.0.1.sslip.io/incr
+curl -H 'K-Revision: abc' 'http://affinity.default.127.0.0.1.sslip.io/incr'
 # session=, count=1
-curl -H 'K-Revision: abc' http://affinity.default.127.0.0.1.sslip.io/incr
+curl -H 'K-Revision: abc' 'http://affinity.default.127.0.0.1.sslip.io/incr'
 # session=, count=2
-curl -H 'K-Revision: abc' http://affinity.default.127.0.0.1.sslip.io/incr
+curl -H 'K-Revision: abc' 'http://affinity.default.127.0.0.1.sslip.io/incr'
 # session=, count=3
 ```
 
@@ -274,11 +274,11 @@ kn service update affinity --scale 1 --traffic affinity-00001=50 --traffic @late
 Knative Serving now extracts the flow id from the request url.
 
 ```bash
-curl http://affinity.default.127.0.0.1.sslip.io/incr?flow_id=abc
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?flow_id=abc'
 # session=, count=1
-curl http://affinity.default.127.0.0.1.sslip.io/incr?flow_id=abc
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?flow_id=abc'
 # session=, count=2
-curl http://affinity.default.127.0.0.1.sslip.io/incr?flow_id=abc
+curl 'http://affinity.default.127.0.0.1.sslip.io/incr?flow_id=abc'
 # session=, count=3
 ```
 
