@@ -137,7 +137,14 @@ curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=123'
 : session=123, count=3
 ```
 
+With a single replica of a single revision, session counts behave as expected.
+
 ## Session affinity
+
+To experiment with session affinity, we will scale the example service to three
+replica.
+
+### Default behavior: no session affinity
 
 Deploy three replicas of the service.
 
@@ -146,9 +153,11 @@ kn service delete affinity
 kn service create affinity --image quay.io/tardieu/affinity:dev --scale 3
 ```
 
-Using the default Knative Serving configuration, requests for the same session
-may be routed to multiple replicas using distinct session counts for the same
-session.
+By default Knative Serving does not understand sessions. Requests for the same
+session may be routed to several distinct replicas. Each replica maintains its
+own session counts so the "aggregate" session count returned for a given session
+may appear to stall or decrease depending on the distribution of requests among
+replicas.
 
 ```bash
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
@@ -213,6 +222,14 @@ the session id.
 
 ## Revision affinity
 
+
+To experiment with revision affinity, we will deploy two revisions of the
+example service. We will deploy a single replica per revision so we can get
+proper session counts within a revision without having to rely on session
+affinity.
+
+### Default behavior: no revision affinity
+
 Deploy two revisions of the service with a single replica per revision and a
 50/50 traffic split.
 
@@ -222,9 +239,10 @@ kn service create affinity --image quay.io/tardieu/affinity:dev --scale 1
 kn service update affinity --scale 1 --traffic affinity-00001=50 --traffic @latest=50
 ```
 
-Using the default Knative Serving configuration, requests may be routed to
-multiple revisions and increment distinct session counts (for the empty session
-id).
+By default Knative Serving splits traffic among revisions as specified. Requests
+may therefore increment the session count for either revision 1 or revision 2
+(for the empty session id). This "aggregate" session count may appear to stall
+or decrease.
 
 ```bash
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr'
