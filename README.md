@@ -52,17 +52,17 @@ cd affinity
 
 go run affinity.go &
 
-curl localhost:8080/incr?session_id=abc
+curl 'localhost:8080/incr?session_id=abc'
 # session=abc, count=1
-curl localhost:8080/incr?session_id=abc
+curl 'localhost:8080/incr?session_id=abc'
 # session=abc, count=2
-curl localhost:8080/incr?session_id=123
+curl 'localhost:8080/incr?session_id=123'
 # session=123, count=1
-curl localhost:8080/incr?session_id=abc
+curl 'localhost:8080/incr?session_id=abc'
 # session=abc, count=3
-curl localhost:8080/incr
+curl 'localhost:8080/incr'
 # session=, count=1
-curl localhost:8080/incr
+curl 'localhost:8080/incr'
 # session=, count=2
 
 kill %1
