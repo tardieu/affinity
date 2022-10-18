@@ -13,7 +13,7 @@ func main() {
 	http.HandleFunc("/incr", func(w http.ResponseWriter, r *http.Request) {
 		session := r.URL.Query().Get("session_id")
 		counts[session] += 1
-		fmt.Fprintf(w, "# session=%v, count=%v\n", session, counts[session])
+		fmt.Fprintf(w, ": session=%v, count=%v\n", session, counts[session])
 	})
 
 	// start server

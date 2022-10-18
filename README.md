@@ -32,7 +32,8 @@ sticks to the already selected revision for the session.
 Revision and session affinity take precedence over other routing mechanisms such
 as traffic splitting.
 
-Session affinity does not prevent Knative Serving to scale down a service, possibly forcing the selection of a new target pod for an ongoing session.
+Session affinity does not prevent Knative Serving to scale down a service,
+possibly forcing the selection of a new target pod for an ongoing session.
 
 This prototype affinity implementation is built into the Knative Serving
 activator component. It requires the activator to always remain on the request
@@ -44,7 +45,7 @@ activator replicas.
 
 To test affinity, we implement a small stateful service in
 [affinity.go](affinity.go). This service keeps track of the number of requests
-per session. 
+per session.
 
 ```bash
 git clone https://github.com/tardieu/affinity.git
@@ -53,17 +54,17 @@ cd affinity
 go run affinity.go &
 
 curl 'localhost:8080/incr?session_id=abc'
-# session=abc, count=1
+: session=abc, count=1
 curl 'localhost:8080/incr?session_id=abc'
-# session=abc, count=2
+: session=abc, count=2
 curl 'localhost:8080/incr?session_id=123'
-# session=123, count=1
+: session=123, count=1
 curl 'localhost:8080/incr?session_id=abc'
-# session=abc, count=3
+: session=abc, count=3
 curl 'localhost:8080/incr'
-# session=, count=1
+: session=, count=1
 curl 'localhost:8080/incr'
-# session=, count=2
+: session=, count=2
 
 kill %1
 ```
@@ -102,8 +103,8 @@ Deploy Redis.
 kubectl apply -n knative-serving -f redis.yaml
 ```
 
-Override the default activator image to add support for session and
-revision affinity.
+Override the default activator image to add support for session and revision
+affinity.
 
 ```bash
 kubectl set image -n knative-serving deployment activator activator=quay.io/tardieu/activator:dev
@@ -123,17 +124,17 @@ Deploy a single replica of the service.
 kn service create affinity --image quay.io/tardieu/affinity:dev --scale 1
 
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
-# session=abc, count=1
+: session=abc, count=1
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
-# session=abc, count=2
+: session=abc, count=2
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=123'
-# session=123, count=1
+: session=123, count=1
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
-# session=abc, count=3
+: session=abc, count=3
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=123'
-# session=123, count=2
+: session=123, count=2
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=123'
-# session=123, count=3
+: session=123, count=3
 ```
 
 ## Session affinity
@@ -151,11 +152,11 @@ session.
 
 ```bash
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
-# session=abc, count=1
+: session=abc, count=1
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
-# session=abc, count=1
+: session=abc, count=1
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
-# session=abc, count=2
+: session=abc, count=2
 ```
 
 ### Session affinity using a request header
@@ -171,11 +172,11 @@ Requests with the same `K-Session` header value are routed to the same replica.
 
 ```bash
 curl -H 'K-Session: abc' 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
-# session=abc, count=1
+: session=abc, count=1
 curl -H 'K-Session: abc' 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
-# session=abc, count=2
+: session=abc, count=2
 curl -H 'K-Session: abc' 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
-# session=abc, count=3
+: session=abc, count=3
 ```
 
 A custom header name may be specified using the
@@ -195,11 +196,11 @@ without the need for an additional header.
 
 ```bash
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
-# session=abc, count=1
+: session=abc, count=1
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
-# session=abc, count=2
+: session=abc, count=2
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
-# session=abc, count=3
+: session=abc, count=3
 ```
 
 ### Session affinity using a path parameter
@@ -227,11 +228,11 @@ id).
 
 ```bash
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr'
-# session=, count=1
+: session=, count=1
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr'
-# session=, count=1
+: session=, count=1
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr'
-# session=, count=2
+: session=, count=2
 ```
 
 ### Revision affinity using a request header
@@ -250,11 +251,11 @@ revision.
 
 ```bash
 curl -H 'K-Revision: abc' 'http://affinity.default.127.0.0.1.sslip.io/incr'
-# session=, count=1
+: session=, count=1
 curl -H 'K-Revision: abc' 'http://affinity.default.127.0.0.1.sslip.io/incr'
-# session=, count=2
+: session=, count=2
 curl -H 'K-Revision: abc' 'http://affinity.default.127.0.0.1.sslip.io/incr'
-# session=, count=3
+: session=, count=3
 ```
 
 A custom header name may be specified using the
@@ -275,11 +276,11 @@ Knative Serving now extracts the flow id from the request url.
 
 ```bash
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?flow_id=abc'
-# session=, count=1
+: session=, count=1
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?flow_id=abc'
-# session=, count=2
+: session=, count=2
 curl 'http://affinity.default.127.0.0.1.sslip.io/incr?flow_id=abc'
-# session=, count=3
+: session=, count=3
 ```
 
 ### Revision affinity using a path parameter
