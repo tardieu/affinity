@@ -75,8 +75,14 @@ id.
 
 First install [Kind](https://kind.sigs.k8s.io), the [Knative
 CLI](https://knative.dev/docs/client/install-kn/), and the [Quickstart
-plugin](https://github.com/knative-sandbox/kn-plugin-quickstart) for the Knative
-CLI.
+plugin](https://knative.dev/docs/getting-started/quickstart-install/) for the
+Knative CLI. For instance, on macOS via Homebrew:
+
+```bash
+brew install kind
+brew install knative/client/kn
+brew install knative-sandbox/kn-plugins/quickstart
+```
 
 Create a Kind cluster and deploy Knative Serving.
 
