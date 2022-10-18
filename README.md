@@ -36,9 +36,9 @@ Session affinity does not prevent Knative Serving to scale down a service,
 possibly forcing the selection of a new target pod for an ongoing session.
 
 This prototype affinity implementation is built into the Knative Serving
-activator component. It requires the activator to always remain on the request
+activator service. It requires the activator to always remain on the request
 path for services that make use of revision or session affinity. The activator
-component may be replicated. We use Redis to consistently handle affinity across
+service may be replicated. We use Redis to consistently handle affinity across
 activator replicas.
 
 ## Example stateful service
@@ -46,6 +46,9 @@ activator replicas.
 To test affinity, we implement a small stateful service in
 [affinity.go](affinity.go). This service keeps track of the number of requests
 per session.
+
+Curl command outputs are prefixed with `:` so as to be ignored by bash/zsh when
+copying code blocks into a terminal.
 
 ```bash
 git clone https://github.com/tardieu/affinity.git
@@ -178,6 +181,7 @@ kn service create affinity --image quay.io/tardieu/affinity --scale 3
 ```
 
 Requests with the same `K-Session` header value are routed to the same replica.
+Session affinity is respected and the program works as intended.
 
 ```bash
 curl -H 'K-Session: abc' 'http://affinity.default.127.0.0.1.sslip.io/incr?session_id=abc'
