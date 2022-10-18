@@ -305,3 +305,12 @@ curl 'http://affinity.default.127.0.0.1.sslip.io/incr?flow_id=abc'
 
 A flow id may also be provided as a path parameter using the
 `activator.knative.dev/sticky-revision-path-segment` service annotation.
+
+
+## Cleanup
+
+To cleanup simply delete the Kind cluster:
+
+```bash
+kind delete cluster --name knative
+```
