@@ -4,7 +4,25 @@ This repository demonstrates the _revision affinity_ and _session affinity_
 support for Knative Serving under development at
 https://github.com/tardieu/serving/tree/affinity.
 
-## Overview
+## Motivation
+
+Revision and session affinity make it possible to consistently route a series of
+requests (sharing a key) respectively to the same revision of a Knative service
+or the same replica (same pod). Revision and affinity support new use cases for
+Knative serving including:
+- traffic splitting with revision affinity
+  - example: route 10% of users to new revision of web site (key = user id)
+- caching immutable data
+  - example: a machine-learning service loading a model or data set based on an
+    input parameter (key = model name)
+- scaling stateful services
+  - interactive services and chatbots, e.g., "show me car pictures", "show me red ones" (key
+    = session id)
+  - sharding, e.g., "Alice counts one red car", "Nicolas counts one red car"
+    (key = car color)
+  - serverless actors (key = actor type + instance id)
+
+## Description
 
 Revision affinity makes it possible for a series of requests to be consistently
 routed to the same revision of a Knative service as long as this revision
